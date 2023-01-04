@@ -3,7 +3,7 @@ import openpyxl as opxl
 
 
 def get_city():
-    wb = opxl.load_workbook('MR.WU.xlsx')
+    wb = opxl.load_workbook('data/MR.WU.xlsx')
     sheet = wb['Sheet1']
     sheet_data = {}
 
@@ -15,5 +15,5 @@ def get_city():
         sheet_data.setdefault(province, {})
         sheet_data[province].setdefault(city, citycode)
 
-    with open('citydata.json', 'w', encoding='utf-8') as f:
+    with open('data/citydata.json', 'w', encoding='utf-8') as f:
         json.dump(sheet_data, f, indent=4)

@@ -6,13 +6,13 @@ from get_city import get_city
 
 
 def weather_data() -> dict:
-    with open('weatherdata.json', 'r', encoding='utf-8') as f:
+    with open('data/weatherdata.json', 'r', encoding='utf-8') as f:
         txt = json.load(f)
     return txt
 
 
 def city_data() -> dict:
-    with open('citydata.json', 'r', encoding='utf-8') as f:
+    with open('data/citydata.json', 'r', encoding='utf-8') as f:
         citydata = json.load(f)
     return citydata
 

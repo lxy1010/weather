@@ -8,5 +8,5 @@ def get_weather():
     res.raise_for_status()
     weather_dict = eval(bs4.BeautifulSoup(res.text, 'html.parser').text)    # dict
 
-    with open('weatherdata.json', 'w', encoding='utf-8') as f:
+    with open('data/weatherdata.json', 'w', encoding='utf-8') as f:
         json.dump(weather_dict, f, indent=4)
