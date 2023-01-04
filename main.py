@@ -1,5 +1,7 @@
 import json
 import pyinputplus as pyip
+import sys
+import time
 
 from get_weather import get_weather
 from get_city import get_city
@@ -17,8 +19,10 @@ def city_data() -> dict:
     return citydata
 
 
-def update_weather():
-    get_weather()
+def update_weather(code):
+    if not get_weather(code):
+        print("运行终止.")
+        sys.exit()
 
 
 def update_city():
@@ -33,4 +37,53 @@ def ask_users_city_code() -> dict:
             'code': city[user_province][user_city]}
 
 
-print(ask_users_city_code())
+def qaa_wealike():
+    def outyb(head_flag=False, sleep=0.0):
+        if head_flag:
+            time.sleep(sleep)
+            print(f"{day['ymd']}  {day['week']}:")
+        else:
+            print(f"\n{yb} 天气预报 ({weather['cityInfo']['parent']} "
+                  f"{weather['cityInfo']['city']} {weather['cityInfo']['updateTime']}更新): \n\t", end='')
+        print(f"天气: {day['type']}\n\t"
+              f"当日最高: {day['high']}\n\t"
+              f"当日最低: {day['low']}\n\t"
+              f"日出: {day['sunrise']}\n\t"
+              f"日落: {day['sunset']}\n\t"
+              f"空气质量指数: {day['aqi']}\n\t"
+              f"风向: {day['fx']}\n\t"
+              f"风速: {day['fl']}\n\t"
+              f"小贴士: {day['notice']}\n")
+
+    weather = weather_data()
+    data = weather['data']
+
+    cncode_uncode = {"当前": 'now', "预报": 'forecast'}
+
+    print(f"天气查询 {weather['time']} {weather['cityInfo']['parent']} {weather['cityInfo']['city']} "
+          f"(上一次更新 {weather['cityInfo']['updateTime']})")
+    dy = pyip.inputMenu(list(cncode_uncode.keys()), numbered=True, prompt='\n您希望查询: \n')
+    if cncode_uncode[dy] == 'now':
+        print(f"\n最近一次天气"
+              f"({weather['cityInfo']['parent']} {weather['cityInfo']['city']} {weather['cityInfo']['updateTime']}更新): "
+              f"\n\t湿度: {data['shidu']}\n\t"
+              f"pm2.5: {data['pm25']}\n\t"
+              f"pm10: {data['pm10']}\n\t"
+              f"空气质量指标: {data['quality']}\n\t"
+              f"温度: {data['wendu']}\n\t"
+              f"小贴士: {data['ganmao']}\n")
+    else:
+        forecast = data['forecast']
+        all_day = [day['ymd'] + '  ' + day['week'] for day in forecast]
+        yb = pyip.inputMenu(all_day + ['14天'], numbered=True, prompt='\n您希望查询: \n')
+        if yb == '14天':
+            print(f"\n14天 天气预报 ({weather['cityInfo']['parent']} "
+                  f"{weather['cityInfo']['city']} {weather['cityInfo']['updateTime']}更新): \n\t")
+            for day in forecast:
+                outyb(True, 0.5)
+        for day in forecast:
+            if yb == day['ymd'] + '  ' + day['week']:
+                outyb()
+
+
+qaa_wealike()
