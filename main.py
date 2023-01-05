@@ -29,7 +29,7 @@ def update_city():
     get_city()
 
 
-def ask_users_city_code() -> dict:
+def ask_users_city_code() -> int:
     city = city_data()
     user_province = pyip.inputMenu(list(city.keys()), numbered=True, prompt='请输入您想查询的省: \n')
     user_city = pyip.inputMenu(list(city[user_province].keys()), numbered=True, prompt='\n请输入您想查询的市: \n')
@@ -85,5 +85,6 @@ def qaa_wealike():
                 outyb()
 
 
+update_city()
 update_weather(ask_users_city_code())
 qaa_wealike()
