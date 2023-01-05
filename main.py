@@ -40,19 +40,19 @@ def qaa_wealike():
     def outyb(head_flag=False, sleep=0.0):
         if head_flag:
             time.sleep(sleep)
-            print(f"{day['ymd']}  {day['week']}:")
+            print(f"{day['ymd']}  {day['week']}:\n\t", end='')
         else:
             print(f"\n{yb} 天气预报 ({weather['cityInfo']['parent']} "
                   f"{weather['cityInfo']['city']} {weather['cityInfo']['updateTime']}更新): \n\t", end='')
-        print(f"天气: {day['type']}\n\t"
-              f"当日最高: {day['high']}\n\t"
-              f"当日最低: {day['low']}\n\t"
-              f"日出: {day['sunrise']}\n\t"
-              f"日落: {day['sunset']}\n\t"
-              f"空气质量指数: {day['aqi']}\n\t"
-              f"风向: {day['fx']}\n\t"
-              f"风速: {day['fl']}\n\t"
-              f"小贴士: {day['notice']}\n")
+        print(f"-天气: {day['type']}\n\t"
+              f"-当日最高: {day['high']}\n\t"
+              f"-当日最低: {day['low']}\n\t"
+              f"-日出: {day['sunrise']}\n\t"
+              f"-日落: {day['sunset']}\n\t"
+              f"-空气质量指数: {day['aqi']}\n\t"
+              f"-风向: {day['fx']}\n\t"
+              f"-风速: {day['fl']}\n\t"
+              f"-小贴士: {day['notice']}\n")
 
     weather = weather_data()
     data = weather['data']
@@ -65,12 +65,12 @@ def qaa_wealike():
     if cncode_uncode[dy] == 'now':
         print(f"\n最近一次天气"
               f"({weather['cityInfo']['parent']} {weather['cityInfo']['city']} {weather['cityInfo']['updateTime']}更新): "
-              f"\n\t湿度: {data['shidu']}\n\t"
-              f"pm2.5: {data['pm25']}\n\t"
-              f"pm10: {data['pm10']}\n\t"
-              f"空气质量指标: {data['quality']}\n\t"
-              f"温度: {data['wendu']}\n\t"
-              f"小贴士: {data['ganmao']}\n")
+              f"\n\t-湿度: {data['shidu']}\n\t"
+              f"-pm2.5: {data['pm25']}\n\t"
+              f"-pm10: {data['pm10']}\n\t"
+              f"-空气质量指标: {data['quality']}\n\t"
+              f"-温度: {data['wendu']}\n\t"
+              f"-小贴士: {data['ganmao']}\n")
     else:
         forecast = data['forecast']
         all_day = [day['ymd'] + '  ' + day['week'] for day in forecast]
@@ -79,12 +79,24 @@ def qaa_wealike():
             print(f"\n14天 天气预报 ({weather['cityInfo']['parent']} "
                   f"{weather['cityInfo']['city']} {weather['cityInfo']['updateTime']}更新): \n\t")
             for day in forecast:
-                outyb(True, 0.5)
+                outyb(True)
         for day in forecast:
             if yb == day['ymd'] + '  ' + day['week']:
                 outyb()
 
 
-update_city()
-update_weather(ask_users_city_code())
-qaa_wealike()
+def auto(default=True, noweadata_code='101200901'):
+    if default:
+        try:
+            update_weather(weather_data()['cityInfo']['citykey'])    # 获取最新数据
+        except KeyError:
+            print(f'WeatherData 未初始化, 请检查后重试.\n使用默认 CityCode: {noweadata_code} '
+                  f'{weather_data()["cityInfo"]["parent"]} {weather_data()["cityInfo"]["city"]}.\n\n')
+            update_weather('101200901')
+
+    else:
+        update_weather(ask_users_city_code())
+    qaa_wealike()
+
+
+auto(True)
