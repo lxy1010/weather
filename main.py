@@ -1,6 +1,7 @@
 import json
 import pyinputplus as pyip
 import sys
+import pyttsx3
 import time
 
 from get_weather import get_weather
@@ -84,11 +85,13 @@ def qaa_wealike():
             if yb == day['ymd'] + '  ' + day['week']:
                 outyb()
 
+    return 0
 
-def auto(default=True, noweadata_code='101200901'):
+
+def auto(default=True, noweadata_code='101200901', update=False):
     if default:
         try:
-            update_weather(weather_data()['cityInfo']['citykey'])    # 获取最新数据
+            update_weather(weather_data()['cityInfo']['citykey'])  # 获取最新数据
         except KeyError:
             print(f'WeatherData 未初始化, 请检查后重试.\n使用默认 CityCode: {noweadata_code} '
                   f'{weather_data()["cityInfo"]["parent"]} {weather_data()["cityInfo"]["city"]}.\n\n')
@@ -96,7 +99,49 @@ def auto(default=True, noweadata_code='101200901'):
 
     else:
         update_weather(ask_users_city_code())
-    qaa_wealike()
+    if not update:
+        qaa_wealike()
 
 
-auto(True)
+def auto_plan():
+    def sayit(*arg):
+        ps = pyttsx3.init()
+        for saying in arg:
+            print(saying)
+            ps.say(saying)
+            ps.runAndWait()
+            time.sleep(0.5)
+
+    auto(update=True)
+    weather = weather_data()
+    parent = weather['cityInfo']['parent']
+    city = weather['cityInfo']['city']
+    date = weather['date']
+    uptime = weather['cityInfo']['updateTime']
+    data = weather['data']
+    forecast = data['forecast']
+    sayit(f"大家好, 欢迎收听本次的 天气预报. ",
+          f"现在是北京时间 {time.strftime('%H时%M分%S秒')}. ",
+          f"接下来播报的是 {parent} {city} {date[:4]}年{date[4:6]}月{date[6:8]}日 (最新{uptime[:2]}时 {uptime[3:5]}分) 实时天气.",
+          f"湿度: {data['shidu']} ",
+          f"pm2.5; {data['pm25']} ",
+          f"pm10: {data['pm10']} ",
+          f"空气质量指标: {data['quality']} ",
+          f"温度: {data['wendu']} ",
+          f"小贴士: {data['ganmao']}",
+          f"接下来播报的是: 14天 天气预报.")
+    for day in forecast:
+        dates = day['ymd']
+        sayit(f"{dates[:4]}年{dates[5:7]}月{dates[8:10]}日",
+              f"天气: {day['type']}",
+              f"当日最高: {day['high']}",
+              f"当日最低: {day['low']}",
+              f"日出: {day['sunrise']}",
+              f"日落: {day['sunset']}",
+              f"空气质量指数: {day['aqi']}",
+              f"风向: {day['fx']}",
+              f"风速: {day['fl']}",
+              f"小贴士: {day['notice']}")
+
+
+auto_plan()
