@@ -9,28 +9,33 @@ from get_city import get_city
 
 
 def weather_data() -> dict:
+    """从 data/weatherdata.json 获取天气数据"""
     with open('data/weatherdata.json', 'r', encoding='utf-8') as f:
         txt = json.load(f)
     return txt
 
 
 def city_data() -> dict:
-    with open('data/citydata.json', 'r', encoding='utf-8') as f:
+    """从 data/citydata.json 获取城市数据"""
+    with open('', 'r', encoding='utf-8') as f:
         citydata = json.load(f)
     return citydata
 
 
 def update_weather(code):
+    """调用 get_weather.py/get_weather 更新天气数据"""
     if not get_weather(code):
         print("运行终止.")
         sys.exit()
 
 
 def update_city():
+    """调用 get_city.py/get_city 更新城市数据"""
     get_city()
 
 
 def ask_users_city_code() -> int:
+    """询问用户查询省份 返回该城市 ID"""
     city = city_data()
     user_province = pyip.inputMenu(list(city.keys()), numbered=True, prompt='请输入您想查询的省: \n')
     user_city = pyip.inputMenu(list(city[user_province].keys()), numbered=True, prompt='\n请输入您想查询的市: \n')
@@ -38,7 +43,10 @@ def ask_users_city_code() -> int:
 
 
 def qaa_wealike():
+    """询问用户查询天气 并给出反馈"""
+
     def outyb(head_flag=False, sleep=0.0):
+        """14天天气预报 输出显示"""
         if head_flag:
             time.sleep(sleep)
             print(f"{day['ymd']}  {day['week']}:\n\t", end='')
@@ -63,6 +71,7 @@ def qaa_wealike():
     print(f"天气查询 {weather['time']} {weather['cityInfo']['parent']} {weather['cityInfo']['city']} "
           f"(上一次更新 {weather['cityInfo']['updateTime']})")
     dy = pyip.inputMenu(list(cncode_uncode.keys()), numbered=True, prompt='\n您希望查询: \n')
+
     if cncode_uncode[dy] == 'now':
         print(f"\n最近一次天气"
               f"({weather['cityInfo']['parent']} {weather['cityInfo']['city']} {weather['cityInfo']['updateTime']}更新): "
@@ -89,6 +98,10 @@ def qaa_wealike():
 
 
 def auto(default=True, noweadata_code='101200901', update=False):
+    """自动操作
+    default: 是否使用本地默认 city
+    noweadata_code: 默认 city
+    update: 是否执行 qaa_wealike"""
     if default:
         try:
             update_weather(weather_data()['cityInfo']['citykey'])  # 获取最新数据
@@ -104,6 +117,7 @@ def auto(default=True, noweadata_code='101200901', update=False):
 
 
 def auto_plan():
+    """自动语音功能"""
     def sayit(*arg):
         ps = pyttsx3.init()
         for saying in arg:
@@ -142,6 +156,3 @@ def auto_plan():
               f"风向: {day['fx']}",
               f"风速: {day['fl']}",
               f"小贴士: {day['notice']}")
-
-
-auto_plan()
