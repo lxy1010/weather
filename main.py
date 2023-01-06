@@ -3,6 +3,7 @@ import pyinputplus as pyip
 import sys
 import pyttsx3
 import time
+import plotly.graph_objects as pltgo
 
 from get_weather import get_weather
 from get_city import get_city
@@ -118,6 +119,7 @@ def auto(default=True, noweadata_code='101200901', update=False):
 
 def auto_plan():
     """自动语音功能"""
+
     def sayit(*arg):
         ps = pyttsx3.init()
         for saying in arg:
@@ -159,8 +161,35 @@ def auto_plan():
 
 
 def show_it():
-    """展示预 报统计图"""
-    pass
+    """展示 预报统计图"""
+    weather = weather_data()
+    forecast = weather['data']['forecast']
+    days = [day['ymd'] for day in forecast]
+    high = [int(day['high'].replace('高温', '').replace('℃', '').replace(' ', '')) for day in forecast]
+    low = [int(day['low'].replace('低温', '').replace('℃', '').replace(' ', '')) for day in forecast]
+
+    fig = pltgo.Figure()
+    fig.add_trace(pltgo.Scatter(name='最高温度',
+                                x=days,
+                                y=high,
+                                mode="markers+lines+text",
+                                text=high,
+                                textposition='top center',
+                                line=dict(color='rgb(255, 50, 0)'),
+                                labels=dict(x='时间', y='最高温度')))
+    fig.add_trace(pltgo.Scatter(name='最低温度',
+                                x=days,
+                                y=low,
+                                mode="markers+lines+text",
+                                text=low,
+                                textposition='top center',
+                                line=dict(color='rgb(0, 50, 255)'),
+                                labels=dict(x='时间', y='最低温度')))
+    fig.update_layout(title=f'{weather["cityInfo"]["parent"]} {weather["cityInfo"]["city"]}    {days[0]} 至 {days[-1]}'
+                            f' 天气变化情况    ({weather["date"]} {weather["cityInfo"]["updateTime"]}更新)',
+                      xaxis=dict(title='天', nticks=16),
+                      yaxis=dict(title='最高温度 (℃)', nticks=15))
+    fig.show()
 
 
-auto(False)
+show_it()
